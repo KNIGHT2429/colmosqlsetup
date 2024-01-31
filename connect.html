@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dynamic Payment Input Boxes</title>
+    <link rel="stylesheet" href="Grid.css">
+    <style>
+        /* Added CSS to display the payment name and payment code fields side by side */
+        .payment-box-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .payment-box-container input {
+            width: 48%; /* Adjust the width as needed */
+        }
+        /* Added CSS for left-right format of discount name and discount code fields */
+        .discount-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .discount-name-container,
+        .discount-code-container {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .discount-name-container input,
+        .discount-code-container input {
+            width: 100%;
+        }
+
+    </style>
+</head>
+<body>
+
+<form method="post" onsubmit="saveDataAsJson()">
+    <div class="container">
+        <h1>Login</h1>
+        <hr>
+        <label for="psw"><b>USERNAME</b></label>
+        <input type="text" placeholder="USERNAME" name="psw" id="psw" required>
+
+        <label for="psw-repeat"><b>PASSWORD</b></label>
+        <input type="password" placeholder="PASSWORD" name="psw-repeat" id="psw-repeat" required>
+
+        <label for="db-name"><b>DATABASE NAME</b></label>
+        <input type="text" placeholder="Enter Database Name" name="db-name" id="db-name" required>
+        <hr>
+
+        <hr>
+        <label for="num_discounts"><b>Number of Discounts:</b></label>
+        <input type="number" name="num_discounts" id="num_discounts" min="0" max="10">
+        <button type="button" onclick="generateDiscounts()">Generate Discounts</button>
+
+        <div id="discount_boxes">
+            <!-- The dynamically generated discount sections will appear here -->
+        </div>
+
+        <hr>
+
+        <label for="outlet_quantity"><b>Enter Outlet Quantity:</b></label>
+        <input type="number" name="outlet_quantity" id="outlet_quantity" min="1" max="10" required>
+        <button type="button" onclick="generateOutlets()">Generate Outlet Boxes</button>
+
+        <div id="outlet_boxes">
+            <!-- The dynamically generated outlet sections will appear here -->
+        </div>
+
+        <hr>
+
+        <button type="submit" class="registerbtn">SUBMIT</button>
+    </div>
+</form>
+
+<script>
+function generateOutlets() {
+    var numOutlets = parseInt(document.getElementById('outlet_quantity').value);
+    var outletContainer = document.getElementById('outlet_boxes');
+    outletContainer.innerHTML = '';
+
+    for (var i = 0; i < numOutlets; i++) {
+        var outletSection = document.createElement('div');
+        outletSection.classList.add('outlet-section');
+
+        var outletNameInput = document.createElement('input');
+        outletNameInput.type = 'text';
+        outletNameInput.placeholder = 'Enter Outlet Name ' + (i + 1);
+        outletNameInput.name = 'outlet_name' + i;
+
+        var outletNicknameInput = document.createElement('input'); // Adding the nickname input field
+        outletNicknameInput.type = 'text';
+        outletNicknameInput.placeholder = 'Enter Outlet Nickname ' + (i + 1); // Placeholder for the nickname
+        outletNicknameInput.name = 'outlet_nickname' + i; // Name attribute for the nickname input
+
+        var outletCustomerCode = document.createElement('input'); // Adding the nickname input field
+        outletCustomerCode.type = 'text';
+        outletCustomerCode.placeholder = 'Enter Customer Code ' + (i + 1); // Placeholder for the nickname
+        outletCustomerCode.name = 'customer_code' + i; // Name attribute for the nickname input
+
+        var outletSalesIdInput = document.createElement('input');
+        outletSalesIdInput.type = 'text';
+        outletSalesIdInput.placeholder = 'Enter Outlet Sales ID ' + (i + 1);
+        outletSalesIdInput.name = 'outlet_sales_id' + i;
+
+        var outletSSTCodeInput = document.createElement('input');
+        outletSSTCodeInput.type = 'text';
+        outletSSTCodeInput.placeholder = 'Enter Outlet SST Code ' + (i + 1);
+        outletSSTCodeInput.name = 'outlet_sst_code' + i;
+
+        var numPaymentBoxesInput = document.createElement('input');
+        numPaymentBoxesInput.type = 'number';
+        numPaymentBoxesInput.placeholder = 'Number of Payment Methods for Outlet ' + (i + 1);
+        numPaymentBoxesInput.name = 'num_of_boxes_outlet_' + i;
+
+        var generatePaymentBoxesBtn = document.createElement('button');
+        generatePaymentBoxesBtn.type = 'button';
+        generatePaymentBoxesBtn.textContent = 'Generate Payment Boxes';
+        generatePaymentBoxesBtn.onclick = generateBoxesForOutlet.bind(null, i);
+
+        var outletPaymentBoxes = document.createElement('div');
+        outletPaymentBoxes.id = 'payment_boxes_for_outlet_' + i;
+
+        outletSection.appendChild(outletNameInput);
+        outletSection.appendChild(outletNicknameInput); // Appending the nickname input field
+        outletSection.appendChild(outletCustomerCode);
+        outletSection.appendChild(outletSalesIdInput);
+        outletSection.appendChild(outletSSTCodeInput);
+        outletSection.appendChild(numPaymentBoxesInput);
+        outletSection.appendChild(generatePaymentBoxesBtn);
+        outletSection.appendChild(outletPaymentBoxes);
+
+        outletContainer.appendChild(outletSection);
+    }
+}
+
+function generateDiscounts() {
+    var numDiscounts = parseInt(document.getElementById('num_discounts').value);
+    var discountContainer = document.getElementById('discount_boxes');
+    discountContainer.innerHTML = ''; // Clear the container before generating new discounts
+
+    for (var i = 0; i < numDiscounts; i++) {
+        var discountSection = document.createElement('div');
+        discountSection.classList.add('discount-section');
+
+        var discountNameContainer = document.createElement('div');
+        discountNameContainer.classList.add('discount-name-container');
+
+        var discountNameInput = document.createElement('input');
+        discountNameInput.type = 'text';
+        discountNameInput.placeholder = 'Enter Discount Name ' + (i + 1);
+        discountNameInput.name = 'discount_name_' + i;
+
+        discountNameContainer.appendChild(discountNameInput);
+
+        var discountCodeContainer = document.createElement('div');
+        discountCodeContainer.classList.add('discount-code-container');
+
+        var discountCodeInput = document.createElement('input');
+        discountCodeInput.type = 'text';
+        discountCodeInput.placeholder = 'Enter Discount Code ' + (i + 1);
+        discountCodeInput.name = 'discount_code_' + i;
+
+        discountCodeContainer.appendChild(discountCodeInput);
+
+        var discountTypeSelect = document.createElement('select');
+        discountTypeSelect.name = 'discount_type_' + i;
+
+        var percentageOption = document.createElement('option');
+        percentageOption.value = '3';
+        percentageOption.text = 'Percentage';
+        discountTypeSelect.appendChild(percentageOption);
+
+        var valueOption = document.createElement('option');
+        valueOption.value = '2';
+        valueOption.text = 'Value';
+        discountTypeSelect.appendChild(valueOption);
+
+        discountSection.appendChild(discountNameContainer);
+        discountSection.appendChild(discountCodeContainer);
+        discountSection.appendChild(discountTypeSelect);
+
+        discountContainer.appendChild(discountSection);
+    }
+}
+
+
+function generateBoxesForOutlet(outletIndex) {
+    var numBoxes = parseInt(document.getElementsByName('num_of_boxes_outlet_' + outletIndex)[0].value);
+    var dynamicBoxContainer = document.getElementById('payment_boxes_for_outlet_' + outletIndex);
+    dynamicBoxContainer.innerHTML = ''; // Clear the container before generating new boxes
+
+    for (var i = 0; i < numBoxes; i++) {
+        var paymentBoxContainer = document.createElement('div');
+        paymentBoxContainer.classList.add('payment-box-container');
+
+        var paymentNameInput = document.createElement('input');
+        paymentNameInput.type = 'text';
+        paymentNameInput.placeholder = 'Enter Payment Name for Outlet ' + (outletIndex + 1) + ', Payment ' + (i + 1);
+        paymentNameInput.name = 'outlet_' + outletIndex + '_payment_name_' + i;
+
+        var paymentCodeInput = document.createElement('input');
+        paymentCodeInput.type = 'text';
+        paymentCodeInput.placeholder = 'Enter Payment Code for Outlet ' + (outletIndex + 1) + ', Payment ' + (i + 1);
+        paymentCodeInput.name = 'outlet_' + outletIndex + '_payment_code_' + i;
+
+        var paymentTypeSelect = document.createElement('select');
+        paymentTypeSelect.name = 'outlet_' + outletIndex + '_payment_type_' + i;
+
+        var cashOption = document.createElement('option');
+        cashOption.value = '1';
+        cashOption.text = 'Cash';
+        paymentTypeSelect.appendChild(cashOption);
+
+        var creditCardOption = document.createElement('option');
+        creditCardOption.value = '2';
+        creditCardOption.text = 'Credit Card';
+        paymentTypeSelect.appendChild(creditCardOption);
+
+        var voucherOption = document.createElement('option');
+        voucherOption.value = '3';
+        voucherOption.text = 'Voucher';
+        paymentTypeSelect.appendChild(voucherOption);
+
+        var eWalletOption = document.createElement('option');
+        eWalletOption.value = '4';
+        eWalletOption.text = 'E-Wallet';
+        paymentTypeSelect.appendChild(eWalletOption);
+
+        var othersOption = document.createElement('option');
+        othersOption.value = '5';
+        othersOption.text = 'Others';
+        paymentTypeSelect.appendChild(othersOption);
+
+        var pointsOption = document.createElement('option');
+        pointsOption.value = '6';
+        pointsOption.text = 'Points';
+        paymentTypeSelect.appendChild(pointsOption);
+
+        paymentBoxContainer.appendChild(paymentNameInput);
+        paymentBoxContainer.appendChild(paymentCodeInput);
+        paymentBoxContainer.appendChild(paymentTypeSelect);
+
+        dynamicBoxContainer.appendChild(paymentBoxContainer);
+    }
+}
+
+function saveDataAsJson() {
+    var data = {
+        username: document.getElementById('psw').value,
+        password: document.getElementById('psw-repeat').value,
+        databaseName: document.getElementById('db-name').value,
+        outletQuantity: parseInt(document.getElementById('outlet_quantity').value),
+        outlets: []
+    };
+
+    // Save discounts information
+    var numDiscounts = parseInt(document.getElementById('num_discounts').value);
+    var discounts = [];
+
+    for (var i = 0; i < numDiscounts; i++) {
+        var discount = {
+            name: document.getElementsByName('discount_name_' + i)[0].value,
+            code: document.getElementsByName('discount_code_' + i)[0].value,
+            type: document.getElementsByName('discount_type_' + i)[0].value
+        };
+        discounts.push(discount);
+    }
+
+    data.discounts = discounts;
+
+    for (var i = 0; i < data.outletQuantity; i++) {
+    var outletId = i + 1;
+    var outlet = {
+        id: outletId,
+        name: document.getElementsByName('outlet_name' + i)[0].value,
+        nickname: document.getElementsByName('outlet_nickname' + i)[0].value, // Collecting the nickname value
+        customercode: document.getElementsByName('customer_code' + i)[0].value,
+        salesId: document.getElementsByName('outlet_sales_id' + i)[0].value,
+        sstCode: document.getElementsByName('outlet_sst_code' + i)[0].value,
+        paymentMethods: []
+    };
+
+        var numBoxes = parseInt(document.getElementsByName('num_of_boxes_outlet_' + i)[0].value);
+
+        for (var j = 0; j < numBoxes; j++) {
+            var payment = {
+                name: document.getElementsByName('outlet_' + i + '_payment_name_' + j)[0].value,
+                code: document.getElementsByName('outlet_' + i + '_payment_code_' + j)[0].value,
+                mode: document.getElementsByName('outlet_' + i + '_payment_type_' + j)[0].value
+            };
+
+            outlet.paymentMethods.push(payment);
+        }
+
+        data.outlets.push(outlet);
+    }
+
+    var jsonData = JSON.stringify(data);
+    var dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonData);
+
+    var a = document.createElement('a');
+    a.href = dataUri;
+    a.download = 'config.json';
+    a.click();
+}
+
+
+</script>
+
+</body>
+</html>
